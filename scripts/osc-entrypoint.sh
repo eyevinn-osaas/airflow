@@ -11,12 +11,14 @@ if [ ! -z "$OSC_HOSTNAME" ]; then
   export AIRFLOW__CORE__EXECUTION_API_SERVER_URL="https://$OSC_HOSTNAME/execution/"
 fi
 
-if [ -z "$ADMIN_PASSWORD" ]; then
-  echo "ADMIN_PASSWORD is not set, using default 'admin'"
-  ADMIN_PASSWORD="admin"
+if [ ! -f "/opt/airflow/simple_auth_manager_passwords.json.generated" ]; then
+  echo "No existing password file found, creating a new one."
+  if [ -z "$ADMIN_PASSWORD" ]; then
+    echo "ADMIN_PASSWORD is not set, using default 'admin'"
+    ADMIN_PASSWORD="admin"
+  fi
+  echo "{\"admin\": \"$ADMIN_PASSWORD\"}" > /opt/airflow/simple_auth_manager_passwords.json.generated
 fi
-
-echo "{\"admin\": \"$ADMIN_PASSWORD\"}" > /opt/airflow/simple_auth_manager_passwords.json.generated
 
 airflow db migrate
 
