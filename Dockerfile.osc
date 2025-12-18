@@ -1,0 +1,9 @@
+FROM apache/airflow:3.1.5
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=True
+USER root
+COPY --chmod=755 ./scripts/osc-entrypoint.sh /osc-entrypoint.sh
+
+USER airflow
+ENTRYPOINT [ "/osc-entrypoint.sh" ]
+
+CMD [ "standalone" ]
